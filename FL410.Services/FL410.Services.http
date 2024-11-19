@@ -1,0 +1,6 @@
+@FL410.Services_HostAddress = http://localhost:5027
+
+GET {{FL410.Services_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

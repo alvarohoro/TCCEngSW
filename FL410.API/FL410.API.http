@@ -1,0 +1,6 @@
+@FL410.API_HostAddress = https://backend.local
+
+GET {{FL410.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
