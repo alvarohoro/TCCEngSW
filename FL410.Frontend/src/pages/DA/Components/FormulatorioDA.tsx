@@ -1,11 +1,12 @@
 import { RegisterOptions, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import CampoForm, { ICampoForm } from "../../../components/CampoForm";
 import { useEffect, useState } from "react";
-import { AeronaveParcialViewModel } from "../../../types/AeronaveParcialViewModel";
-import { useAeronave } from "../../../api/hooks/useAeronave";
+// import { AeronaveParcialViewModel } from "../../../types/AeronaveParcialViewModel";
+// import { useAeronave } from "../../../api/hooks/useAeronave";
 import { useNotificacao } from "../../../hooks/useNotificacao";
-import { DAViewModel } from "../../../types/DAViewModel";
+// import { DAViewModel } from "../../../types/DAViewModel";
 import { useDA } from "../../../api/hooks/useDA";
+import { IDA } from "../../../types/IDA";
 // import { useAeronave } from "../../../api/hooks/useAeronave";
 // import { useEffect, useMemo, useState } from "react";
 // import { AeronaveParcialViewModel } from "../../../types/AeronaveParcialViewModel";
@@ -17,11 +18,11 @@ export default function FormularioDA(
         aoFechar
     }: {
         abrir: boolean,
-        da?: DAViewModel | null,
+        da?: IDA | undefined,
         aoFechar: () => void
     }) {
 
-    const { aeronavesParciais } = useAeronave();
+    // const { aeronavesParciais } = useAeronave();
 
 
     const [camposDAs, setCamposDAs] = useState<ICampoForm | null>(null);
@@ -32,12 +33,9 @@ export default function FormularioDA(
                 {
                     id: "id",
                     label: "ID",
-                    flexBasis: "basis-1/4",
+                    flexBasis: "hidden",
                     text: { placeholder: "Insira o ID" },
-                    value: "",
-                    registerOptions: {
-                        required: { value: true, message: "Campo obrigatório" }
-                    }
+                    value: ""
                 },
                 {
                     id: "numeroEmenda",
@@ -46,7 +44,11 @@ export default function FormularioDA(
                     text: { placeholder: "Insira o número da emenda" },
                     value: "",
                     registerOptions: {
-                        required: { value: true, message: "Campo obrigatório" }
+                        required: { value: true, message: "Campo obrigatório" },
+                        pattern: {
+                            value: /^[0-9]+$/,
+                            message: 'Insirna um número',
+                        },
                     }
                 },
                 {
@@ -152,44 +154,41 @@ export default function FormularioDA(
                 {
                     id: "produtoId",
                     label: "ID do Produto",
-                    flexBasis: "basis-1/4",
+                    flexBasis: "hidden",
                     text: { placeholder: "Insira o ID do produto" },
-                    value: "",
-                    registerOptions: {
-                        required: { value: true, message: "Campo obrigatório" }
-                    }
+                    value: ""
                 }
             ]
         });
     }, []);
 
     // Carrega as aeronaves parciais e adiciona a opção de "DA não instalado" ao select
-    const opcoesPadrao: AeronaveParcialViewModel[] = [{ id: "", matricula: "", fabricante: "DA não instalado", modelo: "", defaultValue: true }];
-    if (aeronavesParciais.isSuccess && camposDAs) {
-        const aeronaves = aeronavesParciais.data?.data as AeronaveParcialViewModel[];
-        const aeronavesComOpcoesPadrao = ([...aeronaves, ...opcoesPadrao]);
-        const aeronavesOptions = aeronavesComOpcoesPadrao.map((aeronave: AeronaveParcialViewModel) => ({
-            label: `${aeronave.matricula ? `${aeronave.matricula} -` : ''} ${aeronave.fabricante ? `${aeronave.fabricante}` : ''} ${aeronave.modelo ? ` - ${aeronave.modelo}` : ''}`,
-            valor: aeronave.matricula,
-        }));
+    // const opcoesPadrao: AeronaveParcialViewModel[] = [{ id: "", matricula: "", fabricante: "DA não instalado", modelo: "", defaultValue: true }];
+    // if (aeronavesParciais.isSuccess && camposDAs) {
+    //     const aeronaves = aeronavesParciais.data?.data as AeronaveParcialViewModel[];
+    //     const aeronavesComOpcoesPadrao = ([...aeronaves, ...opcoesPadrao]);
+    //     const aeronavesOptions = aeronavesComOpcoesPadrao.map((aeronave: AeronaveParcialViewModel) => ({
+    //         label: `${aeronave.matricula ? `${aeronave.matricula} -` : ''} ${aeronave.fabricante ? `${aeronave.fabricante}` : ''} ${aeronave.modelo ? ` - ${aeronave.modelo}` : ''}`,
+    //         valor: aeronave.matricula,
+    //     }));
 
-        // Atualiza o estado apenas se os valores realmente mudaram para evitar loops
-        const novosCampos = camposDAs.campos.map((campo, index) =>
-            index === 1 ? { ...campo, select: { ...campo.select, options: aeronavesOptions } } : campo
-        );
+    //     // Atualiza o estado apenas se os valores realmente mudaram para evitar loops
+    //     const novosCampos = camposDAs.campos.map((campo, index) =>
+    //         index === 1 ? { ...campo, select: { ...campo.select, options: aeronavesOptions } } : campo
+    //     );
 
 
-        // Verifica se os novos campos são diferentes dos antigos antes de atualizar
-        if (JSON.stringify(novosCampos) !== JSON.stringify(camposDAs.campos)) {
-            setCamposDAs({ ...camposDAs, campos: novosCampos });
-        }
-    }
+    //     // Verifica se os novos campos são diferentes dos antigos antes de atualizar
+    //     if (JSON.stringify(novosCampos) !== JSON.stringify(camposDAs.campos)) {
+    //         setCamposDAs({ ...camposDAs, campos: novosCampos });
+    //     }
+    // }
 
     // Carrega os dados da DA se o formulário é de edição
     if (da && camposDAs) {
         if (camposDAs) {
             const camposComValoresParaEdicao = camposDAs.campos.map(campo => {
-                const valor = campo.id as keyof DAViewModel;
+                const valor = campo.id as keyof IDA;
                 // if (valor === "aeronaveId") {
                 //     return { ...campo, value: da.aeronave?.matricula ? da.aeronave.matricula : "" };
                 // }
@@ -223,15 +222,17 @@ export default function FormularioDA(
 
     const { criarNotificacaoEmTela } = useNotificacao();
     const onSubmit: SubmitHandler<ICampoForm> = (data) => {
+        console.log("OnSubmit...");
         const jsonParaEnvio: Record<string, string> = data.campos.reduce<Record<string, string>>((obj, item) => {
             obj[item.id] = item.value;
             return obj;
         }, {});
+        console.log(jsonParaEnvio);
         post.mutate(jsonParaEnvio, {
             onSuccess: () => {
                 criarNotificacaoEmTela({
                     tipo: "sucesso",
-                    mensagem: `DA ${jsonParaEnvio["modelo"]} ${da ? 'editado' : 'cadastrado'} com sucesso!`,
+                    mensagem: `DA ${jsonParaEnvio["modelo"]} ${da?.id ? 'editada' : 'cadastrada'} com sucesso!`,
                     tempo: 3000
                 });
                 aoFechar();
@@ -245,6 +246,7 @@ export default function FormularioDA(
         reset();
         aoFechar();
     }
+
 
     return (
         <div>
@@ -271,7 +273,7 @@ export default function FormularioDA(
                                     );
                                 })}
 
-                                <div className="flex justify-end space-x-2 mt-4">
+                                <div className="flex basis-full justify-end space-x-2 mt-4">
                                     <button
                                         type="button"
                                         onClick={() => limparEstadosEDevolverFechar()}

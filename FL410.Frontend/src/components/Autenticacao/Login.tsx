@@ -22,7 +22,8 @@ export default function Login() {
             onSuccess: async () => {
                 auth?.setAuth({
                     user: login.email,
-                    roles: []
+                    roles: [],
+                    nome: ""
                 });
             }
         });
@@ -30,12 +31,14 @@ export default function Login() {
 
     useEffect(() => {
         if (rolesQuery.isSuccess && rolesQuery.data?.data) {
-            auth?.setAuth({ user: auth?.authDetails.user || "", roles: rolesQuery.data?.data || [] });
+            auth?.setAuth({ user: auth?.authDetails.user || "", roles: rolesQuery.data?.data || [], nome: "" });
         }
-        if (auth?.authDetails.roles && auth?.authDetails.roles.length > 0) {
-            redirectTo();
-        }
-    }, [auth, redirectTo, rolesQuery.data?.data, rolesQuery.isSuccess])
+        
+    }, [auth, rolesQuery.data?.data, rolesQuery.isSuccess])
+
+    if (auth?.authDetails.roles && auth?.authDetails.roles.length > 0) {
+        redirectTo();
+    }
 
 return (
     <div className="flex">

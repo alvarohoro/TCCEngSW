@@ -7,5 +7,11 @@ export async function obterDAs (){
 }
 
 export async function postDA(data: Record<string,string>){
+    if (data['id'] === '') delete data['id'];
+    if (data['produtoId'] === '') delete data['produtoId'];
     return await fl410api.post("api/DA", data, {withCredentials: true});
+}
+
+export async function deleteDA(id:string){
+    return await fl410api.delete(`api/DA/${id}`, {withCredentials: true});
 }

@@ -76,12 +76,24 @@ namespace FL410.API.Controllers.ANAC
         // POST: api/DA
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<DA>> PostDA(DA dA)
+        public async Task<ActionResult<DA>> PostDA(DAViewModel daVm)
         {
-            _context.DAs.Add(dA);
-            await _context.SaveChangesAsync();
+            var da = daVm.ConvertToDA();
+            if (da.Id == Guid.Empty)
+            {
+                _context.DAs.Add(da);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction("GetDA", new { id = da.Id }, da);
+            }
+            if (da.Id != Guid.Empty)
+            {
+                _context.Entry(da).State = EntityState.Modified;
+                _context.Update(da);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            return BadRequest();
 
-            return CreatedAtAction("GetDA", new { id = dA.Id }, dA);
         }
 
         // DELETE: api/DA/5
