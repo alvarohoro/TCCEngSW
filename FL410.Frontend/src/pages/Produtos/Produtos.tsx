@@ -1,11 +1,11 @@
 import { useState } from "react";
-// import Notificacao from "./Components/Notificacao";
-import ListaProduto from "./Produtos/Components/ListaProdutos";
-import { NotificacaoType } from "../types/NotificacaoType";
-import { useNotificacao } from "../hooks/useNotificacao";
-import { useProduto } from "../api/hooks/useProduto";
-import { ProdutoViewModel } from "../types/ProdutoViewModel";
-import FormularioProduto from "./Produtos/Components/FormulatorioProduto";
+import { useProduto } from "../../api/hooks/useProduto";
+import { ProdutoViewModel } from "../../types/ProdutoViewModel";
+import { useNotificacao } from "../../hooks/useNotificacao";
+import { NotificacaoType } from "../../types/NotificacaoType";
+import FormularioProduto from "./Components/FormulatorioProduto";
+import ListaProdutos from "./Components/ListaProdutos";
+
 
 export default function Produtos() {
     const { get } = useProduto();
@@ -39,7 +39,7 @@ export default function Produtos() {
                                 Adicionar
                             </button>
                         </div>
-                        <ListaProduto produtos={produtos} criarNotificacaoEmTela={configurarNotificacao} />
+                        <ListaProdutos produtos={produtos} criarNotificacaoEmTela={configurarNotificacao} />
                     </div>
                 </div>
             </div>

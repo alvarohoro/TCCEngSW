@@ -7,15 +7,15 @@ import { RequireAuth } from "./Routes/RequireAuth";
 import NaoAutorizado from "./Routes/NaoAutorizado";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Aeronaves from "./pages/Aeronaves";
-import DA from "./pages/DA";
+import DA from "./pages/DA/DA";
 import Inicio from "./pages/Inicio";
 import Mapas from "./pages/Mapas";
-import Fcda from "./pages/Fcda";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { NotificacaoProvider } from "./contexts/NotificacaoContext";
 import Configuracao from "./pages/Configuracao";
-import Produtos from "./pages/Produtos";
+import Aeronaves from "./pages/Aeronaves/Aeronaves";
+import Produtos from "./pages/Produtos/Produtos";
+import Fcda from "./pages/FCDA/Fcda";
 
 const router = createBrowserRouter([
   { path: "/NaoAutorizado", element: <NaoAutorizado /> },

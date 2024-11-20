@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useDA } from "../api/hooks/useDA";
-import FormularioDA from "./DA/Components/FormulatorioDA";
-import { IDA } from "../types/IDA";
+import { useDA } from "../../api/hooks/useDA";
+import FormularioDA from "./Components/FormulatorioDA";
+import { IDA } from "../../types/IDA";
 import { useQueryClient } from "@tanstack/react-query";
-import { useNotificacao } from "../hooks/useNotificacao";
+import { useNotificacao } from "../../hooks/useNotificacao";
 
 export default function DA() {
     const { useDAs, useDelete } = useDA();

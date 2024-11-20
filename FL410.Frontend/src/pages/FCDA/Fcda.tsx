@@ -1,6 +1,7 @@
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
-import CampoForm, { ICampoForm } from "../components/CampoForm";
-import { useFCDA } from "../api/hooks/useFCDA";
+import CampoForm, { ICampoForm } from "../../components/CampoForm";
+import { useFCDA } from "../../api/hooks/useFCDA";
+
 
 export default function Fcda() {
     const parametrosFCDA: ICampoForm = {
