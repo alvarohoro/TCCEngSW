@@ -15,7 +15,7 @@ import { NotificacaoProvider } from "./contexts/NotificacaoContext";
 import Configuracao from "./pages/Configuracao";
 import Aeronaves from "./pages/Aeronaves/Aeronaves";
 import Produtos from "./pages/Produtos/Produtos";
-import Fcda from "./pages/FCDA/Fcda";
+import Fcda from "./pages/FCDA/FCDA";
 
 const router = createBrowserRouter([
   { path: "/NaoAutorizado", element: <NaoAutorizado /> },

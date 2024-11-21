@@ -5,6 +5,10 @@ using Newtonsoft.Json.Converters;
 namespace FL410.API.ViewModels;
 public partial class FcdaViewModel
 {
+
+    public Guid? Id { get; set; }
+    public Guid? ProdutoId { get; set; }
+
     [JsonProperty("Marcas")]
     public required string Marcas { get; set; }
 
@@ -106,6 +110,47 @@ public partial class FcdaViewModel
 
     [JsonProperty("Local")]
     public required string Local { get; set; }
+
+    public FCDA ConverterParaFCDA()
+    {
+
+        var fcda = new FCDA()
+        {
+            Id = this.Id ?? Guid.Empty,
+            Efetividade = this.Efetividade,
+            Vencimento = this.Vencimento,
+            ProdutoAplicavel = this.ProdutoAplicavel,
+            TipoCumprimento = this.TipoCumprimento,
+            Aplicabilidade = this.Aplicabilidade,
+            JustificativaNaoAplicabilidade = this.JustificativaNaoAplicabilidade,
+            InstrucaoReferencia = this.InstrucaoReferencia,
+            OutraReferencia = this.OutraReferencia,
+            TimeSinceNew = this.TimeSinceNew,
+            CyclesSinceNew = this.CyclesSinceNew,
+            TimeSinceOverhaul = this.TimeSinceOverhaul,
+            CyclesSinceOverhaul = this.CyclesSinceOverhaul,
+            TimeSinceLastInspection = this.TimeSinceLastInspection,
+            CyclesSinceLastInspection = this.CyclesSinceLastInspection,
+            LocalCumprimento = this.LocalCumprimento,
+            DataCumprimento = this.DataCumprimento,
+            MetodoCumprimento = this.MetodoCumprimento,
+            DescricaoCumprimento = this.DescricaoCumprimento,
+            Resultado = this.Resultado,
+            Dificuldade = this.Dificuldade,
+            NovoVencimento = this.NovoVencimento,
+            Executante = this.Executante,
+            AssinaturaExecutante = this.AssinaturaExecutante,
+            Aprovador = this.Aprovador,
+            AssinaturaAprovador = this.AssinaturaAprovador,
+            Entidade = this.Entidade,
+            Local = this.Local
+        };
+
+
+
+        return fcda;
+
+    }
 }
 
 public partial class FcdaViewModel

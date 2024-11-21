@@ -1,22 +1,33 @@
+using FL410.Business.Models.Documentos;
+
 public class FCDA
 {
 
-    public Guid Id {get;set;}
-    public string? Marcas { get; set; }
-    public string? NumeroDA { get; set; }
+    public FCDA()
+    {
+
+    }
+    public Guid Id { get; set; }
+    public Guid? AeronaveId { get; set; }
+    public Guid? DAId { get; set; }
+    public Guid? ProdutoId { get; set; }
+    public virtual Aeronave? Aeronave { get; set; }
+    public virtual DA? DA { get; set; }
+    public virtual Produto? Produto { get; set; }
+
     public string? Efetividade { get; set; }
     public string? Vencimento { get; set; }
     public string? ProdutoAplicavel { get; set; }
-    public string? TipoCumprimento {get;set;}
+    public string? TipoCumprimento { get; set; }
     public string? Aplicabilidade { get; set; }
     public string? JustificativaNaoAplicabilidade { get; set; }
     public string? InstrucaoReferencia { get; set; }
     public string? OutraReferencia { get; set; }
-    public string? Fabricante { get; set; }
-    public string? Modelo { get; set; }
-    public string? PartNumber { get; set; }
-    public string? SerialNumber { get; set; }
-    public string? VendorNumber { get; set; }
+    // public string? Fabricante { get; set; }
+    // public string? Modelo { get; set; }
+    // public string? PartNumber { get; set; }
+    // public string? SerialNumber { get; set; }
+    // public string? VendorNumber { get; set; }
     public string? TimeSinceNew { get; set; }
     public string? CyclesSinceNew { get; set; }
     public string? TimeSinceOverhaul { get; set; }
