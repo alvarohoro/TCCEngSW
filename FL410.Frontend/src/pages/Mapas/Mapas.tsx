@@ -1,4 +1,29 @@
+import { useState } from "react";
+import { useAeronave } from "../../api/hooks/useAeronave";
+import { AeronaveParcialViewModel } from "../../types/AeronaveParcialViewModel";
+
 export default function Mapas() {
+
+    const { aeronavesParciais } = useAeronave();
+    const [aeronavesOptions, setAeronavesOptions] = useState<{ label: string; valor: string; }[]>([]);
+    
+    // Carrega as aeronaves parciais e adiciona a opção de "DA não instalado" ao select
+    const opcoesPadrao: AeronaveParcialViewModel[] = [{ id: "", matricula: "", fabricante: "Produto não instalado", modelo: "", defaultValue: true }];
+    if (aeronavesParciais.isSuccess) {
+        const aeronavesRetornadas = aeronavesParciais.data?.data as AeronaveParcialViewModel[];
+        const aeronavesComOpcoesPadrao = ([...aeronavesRetornadas, ...opcoesPadrao]);
+        const aeronavesOptionsLocal = aeronavesComOpcoesPadrao.map((aeronave: AeronaveParcialViewModel) => ({
+            label: `${aeronave.matricula ? `${aeronave.matricula} -` : ''} ${aeronave.fabricante ? `${aeronave.fabricante}` : ''} ${aeronave.modelo ? ` - ${aeronave.modelo}` : ''}`,
+            valor: aeronave.matricula,
+        }));
+        
+        // Verifica se os novos campos são diferentes dos antigos antes de atualizar
+        if (JSON.stringify(aeronavesOptionsLocal) !== JSON.stringify(aeronavesOptions)) {
+            setAeronavesOptions(aeronavesOptionsLocal)
+        }
+    }
+
+
     const adData = [
         {
             ad: "64-20-01",
@@ -39,7 +64,7 @@ export default function Mapas() {
         <div>
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-200 p-4">
                 {/* Seletor de Filtros */}
-                <div className="mb-6 w-full max-w-4xl bg-white p-4 rounded-lg shadow-md">
+                <form className="mb-6 w-full max-w-4xl bg-white p-4 rounded-lg shadow-md">
                     <h2 className="text-lg font-semibold text-gray-700 mb-4">
                         Selecione abaixo a aeronave e o tipo de mapa que deseja visualizar
                     </h2>
@@ -55,8 +80,9 @@ export default function Mapas() {
                                 id="aeronaves"
                                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="PT-ABC">PT-ABC</option>
-                                <option value="PT-XYZ">PT-XYZ</option>
+                                {aeronavesOptions.map((option, index) => (
+                                    <option key={index} value={option.valor}>{option.label}</option>
+                                ))}
                             </select>
                         </div>
                         <div>
@@ -80,7 +106,7 @@ export default function Mapas() {
                     <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
                         Exibir
                     </button>
-                </div>
+                </form>
 
                 {/* Conteúdo Principal */}
                 <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg">
