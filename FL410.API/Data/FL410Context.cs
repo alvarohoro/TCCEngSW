@@ -22,6 +22,7 @@ public class FL410Context : IdentityDbContext<Usuario>
     public DbSet<FCDA> FCDAs {get;set;}
     public DbSet<Aeronave> Aeronaves {get;set;}
     public DbSet<Produto> Produtos {get;set;}
+    public DbSet<OrganizacaoManutencao> OMs {get;set;} 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

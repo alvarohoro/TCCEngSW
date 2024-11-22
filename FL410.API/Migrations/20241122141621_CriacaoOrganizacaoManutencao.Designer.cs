@@ -4,6 +4,7 @@ using FL410.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FL410.API.Migrations
 {
     [DbContext(typeof(FL410Context))]
-    partial class FL410ContextModelSnapshot : ModelSnapshot
+    [Migration("20241122141621_CriacaoOrganizacaoManutencao")]
+    partial class CriacaoOrganizacaoManutencao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

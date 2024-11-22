@@ -11,7 +11,7 @@ import DA from "./pages/DA/DA";
 import Inicio from "./pages/Inicio";
 import { AuthProvider } from "./contexts/AuthProvider";
 import { NotificacaoProvider } from "./contexts/NotificacaoContext";
-import Configuracao from "./pages/Configuracao";
+import Configuracao from "./pages/Configuracao/Configuracao";
 import Aeronaves from "./pages/Aeronaves/Aeronaves";
 import Produtos from "./pages/Produtos/Produtos";
 import Fcda from "./pages/FCDA/FCDA";
