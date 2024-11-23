@@ -4,7 +4,7 @@ import fl410api from "../clients/axiosClient";
 
 
 export const postLogin = async (login:ILogin) => {
-    return await fl410api.post("api/login?userCookies=true&useSessionCookies=true", login, {withCredentials: true});
+    return await fl410api.post("api/Conta/login?userCookies=true&useSessionCookies=true", login, {withCredentials: true});
 }
 
 export async function getRoles(){

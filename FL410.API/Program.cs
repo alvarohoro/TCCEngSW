@@ -24,11 +24,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddDbContext<FL410Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FL410Context"), sqlOptions => 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("FL410Context"), sqlOptions =>
         sqlOptions.EnableRetryOnFailure())
 );
 
-builder.Services.AddIdentityCore<Usuario>()
+builder.Services.AddIdentityCore<Usuario>(options =>
+{
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedEmail = true;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<FL410Context>()
     .AddApiEndpoints();

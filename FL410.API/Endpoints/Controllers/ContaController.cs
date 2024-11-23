@@ -43,7 +43,13 @@ public class ContaController : ControllerBase
         var isPersistent = (useCookies == true) && (useSessionCookies != true);
         signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
 
-        var result = await signInManager.PasswordSignInAsync(login.Email, login.Password, isPersistent, lockoutOnFailure: false);
+        var user = await signInManager.UserManager.FindByEmailAsync(login.Email);
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await signInManager.PasswordSignInAsync(user, login.Password, isPersistent, lockoutOnFailure: false);
 
         if (result.RequiresTwoFactor)
         {
