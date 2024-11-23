@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import useContextAutenticacao from "../../hooks/useContextAutenticacao";
 import { IAuthDetails } from "../../types/IAuthDetails";
 import { useAutenticacao } from "../../api/hooks/useLogin";
+import { useNotificacao } from "../../hooks/useNotificacao";
 
 export default function Configuracao() {
 
@@ -17,13 +18,14 @@ export default function Configuracao() {
   const configuracao = useGet();
   const post = usePost();
 
-  const {useMudarNome} = useAutenticacao();
+  const { useMudarNome } = useAutenticacao();
   const mudarNome = useMudarNome();
 
   const usuarioAutenticado = useContextAutenticacao();
 
   const isFormOficinaInitialized = useRef(false);
   const isFormUsuarioInitialized = useRef(false);
+
 
   useEffect(() => {
     console.log('Usuário autenticado em configuração...')
@@ -65,6 +67,29 @@ export default function Configuracao() {
       console.log(error);
     }
   }
+
+  const { criarNotificacaoEmTela: notificacao } = useNotificacao();
+
+  useEffect(() => {
+    if (mudarNome.isSuccess) {
+      notificacao({
+        mensagem: "Usuário alterado com sucesso!",
+        tipo: "sucesso",
+        tempo: 3000
+      });
+    }
+  }, [mudarNome.isSuccess, notificacao]);
+
+  useEffect(() => {
+    if (post.isSuccess) {
+      notificacao({
+        mensagem: "Dados da oficina alterados com sucesso!",
+        tipo: "sucesso",
+        tempo: 3000
+      });
+    }
+  }, [post.isSuccess, notificacao]);
+
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
@@ -125,9 +150,10 @@ export default function Configuracao() {
             />
           </div>
           <div>
-            <button type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-            >Salvar</button>
+
+            <button type="submit" disabled={post.isPending} className={` ${post.isPending ? 'bg-gray-500 ' : 'bg-blue-500 hover:bg-blue-600'} sm:col-span-2 mt-4 px-4 py-2  text-white rounded-lg shadow `}>
+              {post.isPending ? 'Salvando...' : 'Salvar Alterações'}
+            </button>
           </div>
         </form>
       </section>
@@ -207,8 +233,8 @@ export default function Configuracao() {
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
           </div>
-          <button type="submit" className="sm:col-span-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
-            Salvar Alterações
+          <button type="submit" disabled={mudarNome.isPending} className={` ${mudarNome.isPending ? 'bg-gray-500 ' : 'bg-blue-500 hover:bg-blue-600'} sm:col-span-2 mt-4 px-4 py-2  text-white rounded-lg shadow `}>
+            {mudarNome.isPending ? 'Salvando...' : 'Salvar Alterações'}
           </button>
         </form>
       </section>
