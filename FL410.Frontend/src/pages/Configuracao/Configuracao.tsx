@@ -2,27 +2,45 @@ import { useForm } from "react-hook-form";
 import { useConfiguracao } from "../../api/hooks/useConfiguracao"
 import { ConfiguracaoViewModel } from "../../types/ConfiguracaoViewModel";
 import { useEffect, useRef } from "react";
+import useContextAutenticacao from "../../hooks/useContextAutenticacao";
+import { IAuthDetails } from "../../types/IAuthDetails";
+import { useAutenticacao } from "../../api/hooks/useLogin";
 
 export default function Configuracao() {
 
 
-  const { register, handleSubmit, reset } = useForm<ConfiguracaoViewModel>();
+  const { register: registerFormOficina, handleSubmit: handleSubmitFormOficina, reset: resetFormOficina } = useForm<ConfiguracaoViewModel>();
 
+  const { register: registerFormUsuarios, handleSubmit: handleSubmitFormUsuario, reset: resetFormUsuario } = useForm<IAuthDetails>();
 
   const { useGet, usePost } = useConfiguracao();
   const configuracao = useGet();
   const post = usePost();
 
-  const isFormInitialized = useRef(false);
+  const {useMudarNome} = useAutenticacao();
+  const mudarNome = useMudarNome();
 
+  const usuarioAutenticado = useContextAutenticacao();
+
+  const isFormOficinaInitialized = useRef(false);
+  const isFormUsuarioInitialized = useRef(false);
 
   useEffect(() => {
-    if (!isFormInitialized.current && configuracao.data?.data) {
-      reset(configuracao.data.data);
-      isFormInitialized.current = true; // Impede chamadas subsequentes
+    console.log('Usuário autenticado em configuração...')
+    console.log(usuarioAutenticado?.authDetails)
+    if (!isFormUsuarioInitialized.current && usuarioAutenticado?.authDetails) {
+      resetFormUsuario(usuarioAutenticado.authDetails);
+      isFormUsuarioInitialized.current = true;
+    }
+  }, [resetFormUsuario, usuarioAutenticado])
+
+  useEffect(() => {
+    if (!isFormOficinaInitialized.current && configuracao.data?.data) {
+      resetFormOficina(configuracao.data.data);
+      isFormOficinaInitialized.current = true; // Impede chamadas subsequentes
 
     }
-  }, [configuracao, reset]);
+  }, [configuracao, resetFormOficina]);
 
   const onSubmit = async (data: ConfiguracaoViewModel) => {
     try {
@@ -32,7 +50,21 @@ export default function Configuracao() {
       console.log(error);
     }
   }
+  const contextAuth = useContextAutenticacao();
 
+  const onSubmitMudarNome = async (data: IAuthDetails) => {
+    try {
+      if (data.nome) {
+        await mudarNome.mutateAsync(data.nome);
+        contextAuth?.setAuth({ ...contextAuth.authDetails, nome: data.nome });
+      } else {
+        console.error("Nome is null");
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
@@ -41,17 +73,17 @@ export default function Configuracao() {
       {/* Seção: Dados da Oficina */}
       <section className="mb-8 bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Dados da Oficina de Manutenção Aeronáutica</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmitFormOficina(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
             type="text"
-            {...register("id")}
+            {...registerFormOficina("id")}
             className="w-full hidden p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
           />
           <div>
             <label className="block text-gray-600 font-medium mb-2">Nome Fantasia da Oficina</label>
             <input
               type="text"
-              {...register("nomeFantasia", { required: "Campo obrigatório" })}
+              {...registerFormOficina("nomeFantasia", { required: "Campo obrigatório" })}
               placeholder="Insira o nome da oficina"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
@@ -60,7 +92,7 @@ export default function Configuracao() {
             <label className="block text-gray-600 font-medium mb-2">Razão Social da Oficina</label>
             <input
               type="text"
-              {...register("razaoSocial", { required: "Campo obrigatório" })}
+              {...registerFormOficina("razaoSocial", { required: "Campo obrigatório" })}
               placeholder="Insira o nome da oficina"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
@@ -69,7 +101,7 @@ export default function Configuracao() {
             <label className="block text-gray-600 font-medium mb-2">CNPJ</label>
             <input
               type="text"
-              {...register("cnpj", { required: "Campo obrigatório" })}
+              {...registerFormOficina("cnpj", { required: "Campo obrigatório" })}
               placeholder="Insira o CNPJ"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
@@ -78,7 +110,7 @@ export default function Configuracao() {
             <label className="block text-gray-600 font-medium mb-2">Certificado de Organização de Manutenção (COM/ANAC)</label>
             <input
               type="text"
-              {...register("certificadoOM", { required: "Campo obrigatório" })}
+              {...registerFormOficina("certificadoOM", { required: "Campo obrigatório" })}
               placeholder="Insira o COM/ANAC"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
@@ -87,7 +119,7 @@ export default function Configuracao() {
             <label className="block text-gray-600 font-medium mb-2">Endereço</label>
             <input
               type="text"
-              {...register("endereco", { required: "Campo obrigatório" })}
+              {...registerFormOficina("endereco", { required: "Campo obrigatório" })}
               placeholder="Insira o endereço"
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
@@ -136,12 +168,15 @@ export default function Configuracao() {
       {/* Seção: Dados do Usuário */}
       <section className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Dados do Usuário</h2>
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form className="grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={handleSubmitFormUsuario(onSubmitMudarNome)}>
           <div>
             <label className="block text-gray-600 font-medium mb-2">Nome</label>
             <input
               type="text"
+              // {...regi}
               placeholder="Insira seu nome"
+              {...registerFormUsuarios("nome")}
+
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
           </div>
@@ -150,8 +185,19 @@ export default function Configuracao() {
             <input
               type="email"
               placeholder="Insira seu e-mail"
+              {...registerFormUsuarios("email")}
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
+          </div>
+          <div>
+            <label className="block text-gray-600 font-medium mb-2">Permissões</label>
+            {usuarioAutenticado?.authDetails?.roles?.map((role, index) => (
+              <label key={index} className="p-2 m-2 text-gray-600 font-medium mb-2">
+
+                <input type="checkbox" className="mr-2" value={role} checked />
+                <span>{role}</span>
+              </label>))}
+
           </div>
           <div className="sm:col-span-2">
             <label className="block text-gray-600 font-medium mb-2">Senha</label>
@@ -161,7 +207,7 @@ export default function Configuracao() {
               className="w-full p-3 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
             />
           </div>
-          <button className="sm:col-span-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
+          <button type="submit" className="sm:col-span-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600">
             Salvar Alterações
           </button>
         </form>

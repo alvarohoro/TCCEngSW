@@ -14,3 +14,7 @@ export async function getRoles(){
 export async function getUserAndRoles(){
     return await fl410api.get<IAuthDetails>("api/Conta/ObterUsuarioComRoles", {withCredentials: true});
 }
+
+export const postMudarNome = async (novoNome: string) => {
+    return await fl410api.get(`api/Conta/MudarNome/${novoNome}`, {withCredentials: true});
+}

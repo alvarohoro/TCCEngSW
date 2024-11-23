@@ -6,6 +6,7 @@ import { createContext, useState, ReactNode } from "react";
 interface IAuthDetails {
   user: null | string;
   nome: string | null;
+  email: string | null;
   roles: string[];
 }
 
@@ -23,7 +24,7 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 // Defina o Provider
 export const AuthProvider = ({ children }: AuthContextProps) => {
-  const [authDetails, setAuth] = useState<IAuthDetails>({ user: null, roles: [], nome: null });
+  const [authDetails, setAuth] = useState<IAuthDetails>({ user: null, roles: [], nome: null, email: null });
 
   console.log("Dentro de AuthProvider.tsx");
 

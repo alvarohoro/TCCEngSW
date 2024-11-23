@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
 import { useUsuarioComPermissoes } from "../api/hooks/useUsuarioComPermissoes";
+import useContextAutenticacao from "../hooks/useContextAutenticacao";
 // import { useUsuarioComPermissoes } from "../hooks/useUsuarioComPermissoes";
 
 interface IAllowedRoles {
@@ -8,7 +8,7 @@ interface IAllowedRoles {
 }
 
 export function RequireAuth({ allowedRoles }: IAllowedRoles): React.ReactElement {
-    const auth = useAuth();
+    const auth = useContextAutenticacao();
     const location = useLocation();
      const {isReady} = useUsuarioComPermissoes();
     // useUsuarioComPermissoes();

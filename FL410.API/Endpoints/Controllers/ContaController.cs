@@ -101,6 +101,39 @@ public class ContaController : ControllerBase
 
         return Ok(new UsuarioComRoles(usuario));
     }
+
+    [HttpGet("MudarNome/{novoNome}")]
+    public async Task<ActionResult> MudarNomeAsync([FromServices] IServiceProvider sp, string novoNome)
+    {
+        var usuario = _httpContextAccessor.HttpContext?.User;
+
+        if (usuario is null)
+        {
+            return Unauthorized();
+        }
+
+        var userManager = sp.GetRequiredService<UserManager<Usuario>>();
+        var signInManager = sp.GetRequiredService<SignInManager<Usuario>>(); // Adicione o SignInManager
+
+        var userId = usuario.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+        var user = userManager.FindByIdAsync(userId).Result;
+
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        user.UserName = novoNome;
+        await userManager.UpdateAsync(user);
+
+        await signInManager.RefreshSignInAsync(user);
+
+        return Ok();
+    }
     private static async Task<InfoResponse> CreateInfoResponseAsync<TUser>(TUser user, UserManager<TUser> userManager)
             where TUser : class
     {

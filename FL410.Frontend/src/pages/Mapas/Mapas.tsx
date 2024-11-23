@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useAeronave } from "../../api/hooks/useAeronave";
 import { AeronaveParcialViewModel } from "../../types/AeronaveParcialViewModel";
 import { useMapa } from "../../api/hooks/useMapa";
+import { useConfiguracao } from "../../api/hooks/useConfiguracao";
+import useContextAutenticacao from "../../hooks/useContextAutenticacao";
 
 export default function Mapas() {
 
@@ -59,6 +61,12 @@ export default function Mapas() {
         e.preventDefault();
         setObterMapa(true);
     }
+
+    const {useGet} = useConfiguracao();
+    const dadosOficina = useGet();
+
+    const usuario = useContextAutenticacao();
+
 
     // const adData = [
     //     {
@@ -248,19 +256,22 @@ export default function Mapas() {
                         {/* Informações da Empresa */}
                         <div className="mt-6">
                             <p>
-                                <span className="font-semibold">Nome da Empresa:</span> EMPRESA FICTÍCIA DE AVIAÇÃO E MANUTENÇÃO DE AERONAVES LTDA
+                                <span className="font-semibold">Nome da Empresa:</span> {dadosOficina.data?.data.razaoSocial}
                             </p>
                             <p>
-                                <span className="font-semibold">Cidade/Estado:</span> SÃO JOSÉ DOS CAMPOS - SP
+                                <span className="font-semibold">Cidade/Estado:</span> {dadosOficina.data?.data.endereco}
                             </p>
                             <p>
-                                <span className="font-semibold">COM:</span> XXXX-01/ANAC
+                                <span className="font-semibold">COM:</span> {dadosOficina.data?.data.certificadoOM}
                             </p>
                             <p>
-                                <span className="font-semibold">Data:</span> 15.11.2024
+                                <span className="font-semibold">Data:</span> {(() => {
+                                    const today = new Date();
+                                    return `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+                                })()}
                             </p>
                             <p>
-                                <span className="font-semibold">Nome do Inspetor:</span> FULANO BELTRANO DA SILVA - CANAC 123455 - CREA 0XXXXX-X
+                                <span className="font-semibold">Nome do Responsável:</span> {usuario?.authDetails?.nome} 
                             </p>
                         </div>
                     </div>

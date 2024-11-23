@@ -1,4 +1,4 @@
-import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/useContextAutenticacao";
 import ItemNavbar from "./ItemNavbar";
 
 export default function Navbar() {

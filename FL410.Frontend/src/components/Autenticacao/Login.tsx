@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ILogin from "../../types/ILogin";
-import useAuth from "../../hooks/useAuth";
-import { useLogin } from "../../api/hooks/useLogin";
+import useAuth from "../../hooks/useContextAutenticacao";
 import { useRoles } from "../../api/hooks/useRoles";
 import { useRedirect } from "../../hooks/useRedirect";
+import { useAutenticacao } from "../../api/hooks/useLogin";
 
 
 export default function Login() {
@@ -12,27 +12,37 @@ export default function Login() {
     const auth = useAuth();
     const {redirectTo} = useRedirect();
     const { register, handleSubmit } = useForm<ILogin>();
-    const loginMutation = useLogin();
-
+    const { useLogin } = useAutenticacao();
+    const efetuarLogin = useLogin();
     const rolesQuery = useRoles();
     
 
     const handleLoginSubmit: SubmitHandler<ILogin> = async (login) => {
-        await loginMutation.mutateAsync(login, {
+        await efetuarLogin.mutateAsync(login, {
             onSuccess: async () => {
+                rolesQuery.refetch();
                 auth?.setAuth({
-                    user: login.email,
+                    user: login.nome,
                     roles: [],
-                    nome: ""
+                    nome: "",
+                    email: login.email,
                 });
             }
         });
     }
 
+    useEffect(()=>{
+        // console.log('Roles');
+        // console.log(rolesQuery.data?.data);
+    }, [rolesQuery]);
+
     useEffect(() => {
         if (rolesQuery.isSuccess && rolesQuery.data?.data) {
-            auth?.setAuth({ user: auth?.authDetails.user || "", roles: rolesQuery.data?.data || [], nome: "" });
+            auth?.setAuth({ user: auth?.authDetails.user || "", roles: rolesQuery.data?.data || [], nome: "", email: auth?.authDetails.email || "" });
+            // console.log(auth);
         }
+        // console.log(auth);
+
         
     }, [auth, rolesQuery.data?.data, rolesQuery.isSuccess])
 
@@ -58,13 +68,13 @@ return (
                 />
                 <input
                     type="submit"
-                    disabled={loginMutation.isPending}
-                    value={loginMutation.isPending ? "Entrando..." : "Entrar"}
-                    className={` border h-9 rounded-full text-white ${loginMutation.isPending ? "bg-gray-400" : "cursor-pointer bg-green-500 hover:bg-green-600"
+                    disabled={efetuarLogin.isPending}
+                    value={efetuarLogin.isPending ? "Entrando..." : "Entrar"}
+                    className={` border h-9 rounded-full text-white ${efetuarLogin.isPending ? "bg-gray-400" : "cursor-pointer bg-green-500 hover:bg-green-600"
                         }`}
                 />
-                {loginMutation.isError && <div className="text-red-500">Erro ao logar</div>}
-                {loginMutation.isSuccess && <div className="text-green-500">Logado com sucesso</div>}
+                {efetuarLogin.isError && <div className="text-red-500">Erro ao logar</div>}
+                {efetuarLogin.isSuccess && <div className="text-green-500">Logado com sucesso</div>}
             </form>
         </div>
         <div className="bg-login bg-cover grow bg-red-400">
